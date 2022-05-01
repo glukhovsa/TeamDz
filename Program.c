@@ -37,7 +37,7 @@ int main(){
     FILE *file;
     file=fopen("file.txt", "w");
     int length, timeBubble, timeHeap;
-    for(length=15000; length<=70000; length++){
+    for(length=30000; length<=60000; length+=200){
         int *massBubble=malloc(sizeof(int)*length);
         int *massHeap=malloc(sizeof(int)*length);
         generation(massBubble, massHeap, length);
@@ -52,4 +52,5 @@ int main(){
         free(massHeap);
     }
     fclose(file);
+    WinExec("Graph.py", 0);
 }
