@@ -13,5 +13,7 @@ for line in lines:
     number.append(i)
 file.close()
 
-plt.plot(number, mHeap, number, mBubble)
+plt.plot(mHeap)
+plt.plot(mBubble)
 plt.savefig('Graph.png')
+plt.show()
