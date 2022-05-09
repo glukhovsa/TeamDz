@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SWAP(type, array, x, y) type z=array[x]; array[x]=array[y]; array[y]=z;
+#define SWAP(type, array, x, y) type z=array[x]; array[x]=array[y]; array[y]=z; //макрос, мен€ющий местами элементы массива
 #define MIN_SIZE 5000;
 #define MAX_SIZE 35000;
 #define STEP 50;
@@ -19,10 +19,10 @@ void generation(int *array1, int *array2, int len){ //функци€, заполн€юща€ два п
 
 float bubbleSort(int *array, int size){ //функци€ сортировки пузырьком, принимает указатель на массив, а возвращает врем€ работы алгоритма
     int start = clock(); //объ€вление переменной start(хранит количество тиков прошедших с начала запуска программы)
-    for(int i=0; i<size-1; i++)
-        for(int j=size-1; j>i; j--)
+    for(int i=size-1; i>0; i--)
+        for(int j=0; j<i; j++) //бежим по массиву от первого элемента до i элемента
             if(array[j-1]>array[j])
-                SWAP(int, array, j-1, j);
+                SWAP(int, array, j-1, j); //"поднимаем" элемент с наиболее большим значение "вверх"
     return ((clock()-start)*1.0)/CLOCKS_PER_SEC; //возвращаем разницу между количеством тиков, прошедших с начала программы, и значением переменной start, перевод€ значение в секунды
 }
 
