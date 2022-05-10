@@ -1,14 +1,13 @@
-
-`#include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-#define SWAP(type, array, x, y) type z=array[x]; array[x]=array[y]; array[y]=z; //ìàêðîñ, ìåíÿþùèé ìåñòàìè ýëåìåíòû ìàññèâà
+#define SWAP(type, array, x, y) type z=array[x]; array[x]=array[y]; array[y]=z; //макрос, меняющий местами элементы массива
 #define MIN_SIZE 5000;
 #define MAX_SIZE 35000;
 #define STEP 50;
 
-void generation(int *array1, int *array2, int len){ //ôóíêöèÿ, çàïîëíÿþùàÿ äâà ïåðåäàííûõ ìàññèâà, ðàíäîìíûìè, íî îäèíàêîâûìè ÷èñëàìè
+void generation(int *array1, int *array2, int len){ //функция, заполняющая два переданных массива, рандомными, но одинаковыми числами
     int i, g;
     for(i=0; i<len; i++){
         g=rand()%201;
@@ -17,13 +16,13 @@ void generation(int *array1, int *array2, int len){ //ôóíêöèÿ, çàïîë
     }
 }
 
-float bubbleSort(int *array, int size){ //ôóíêöèÿ ñîðòèðîâêè ïóçûðüêîì, ïðèíèìàåò óêàçàòåëü íà ìàññèâ, à âîçâðàùàåò âðåìÿ ðàáîòû àëãîðèòìà
-    int start = clock(); //îáúÿâëåíèå ïåðåìåííîé start(õðàíèò êîëè÷åñòâî òèêîâ ïðîøåäøèõ ñ íà÷àëà çàïóñêà ïðîãðàììû)
+float bubbleSort(int *array, int size){ //функция сортировки пузырьком, принимает указатель на массив, а возвращает время работы алгоритма
+    int start = clock(); //объявление переменной start(хранит количество тиков прошедших с начала запуска программы)
     for(int i=size-1; i>0; i--)
-        for(int j=0; j<i; j++) //áåæèì ïî ìàññèâó îò ïåðâîãî ýëåìåíòà äî i ýëåìåíòà
+        for(int j=0; j<i; j++) //бежим по массиву от первого элемента до i элемента
             if(array[j-1]>array[j])
-                SWAP(int, array, j-1, j); //"ïîäíèìàåì" ýëåìåíò ñ íàèáîëåå áîëüøèì çíà÷åíèå "ââåðõ"
-    return ((clock()-start)*1.0)/CLOCKS_PER_SEC; //âîçâðàùàåì ðàçíèöó ìåæäó êîëè÷åñòâîì òèêîâ, ïðîøåäøèõ ñ íà÷àëà ïðîãðàììû, è çíà÷åíèåì ïåðåìåííîé start, ïåðåâîäÿ çíà÷åíèå â ñåêóíäû
+                SWAP(int, array, j-1, j); //"поднимаем" элемент с наиболее большим значение "вверх"
+    return ((clock()-start)*1.0)/CLOCKS_PER_SEC; //возвращаем разницу между количеством тиков, прошедших с начала программы, и значением переменной start, переводя значение в секунды
 }
 
 void heapify(int *arr, int n, int i) {
@@ -59,19 +58,20 @@ float heapSort(int *arr, int n) {
 
 int main(){
     FILE *file;
-    file=fopen("file.txt", "w"); //îòêðûòèå ôàéëà äëÿ çàïèñè â íåãî
+    file=fopen("file.txt", "w"); //открытие файла для записи в него
     int length;
     float timeBubble, timeHeap;
-    for(length=MIN_SIZE; length<=MAX_SIZE; length+=STEP){ //ðàññìàòðèâàíèå ðàáîòó àëãîðèòìîâ äëÿ ìàññèâîâ äëèíîé îò MIN_SIZE äî MAX_SIZE
-        int *massBubble=malloc(sizeof(int)*length); //âûäåëåíèå ïàìÿòè ïîä ìàññèâ, êîòîðûé áóäåò îòñîðòèðîâàí ñîðòèðîâêîé ïóçûðüêîì
-        int *massHeap=malloc(sizeof(int)*length); //âûäåëåíèå ïàìÿòè ïîä ìàññèâ, êîòîðûé áóäåò îòñîðòèðîâàí ïèðîìèäàëüíîé ñîðòèðîâêîé
+    for(length=MIN_SIZE; length<=MAX_SIZE; length+=STEP){ //рассматривание работу алгоритмов для массивов длиной от MIN_SIZE до MAX_SIZE
+        int *massBubble=malloc(sizeof(int)*length); //выделение памяти под массив, который будет отсортирован сортировкой пузырьком
+        int *massHeap=malloc(sizeof(int)*length); //выделение памяти под массив, который будет отсортирован пиромидальной сортировкой
         generation(massBubble, massHeap, length);
-        timeBubble=bubbleSort(massBubble, length); //ñîðòèðîâêà ìàññèâà ïóçûðüêîì, â ïåðåìåííóþ timeBubble çàíîñèòñÿ âðåìÿ ðàáîòû àëãîðèòìà
-        timeHeap=heapSort(massHeap, length); //ïèðîìèäàëüíàÿ ñîðòèðîâêà ìàññèâà, â ïåðåìåííóþ timeBubble çàíîñèòñÿ âðåìÿ ðàáîòû àëãîðèòìà
-        fprintf(file, "%d %f %f\n", length, timeBubble, timeHeap); //çàïèñü ïîëó÷åííûõ äàííûõ â ôàéë
+        timeBubble=bubbleSort(massBubble, length); //сортировка массива пузырьком, в переменную timeBubble заносится время работы алгоритма
+        timeHeap=heapSort(massHeap, length); //пиромидальная сортировка массива, в переменную timeBubble заносится время работы алгоритма
+        fprintf(file, "%d %f %f\n", length, timeBubble, timeHeap); //запись полученных данных в файл
         printf("%d\n", length);
-        free(massBubble); //âûñâîáîæäåíèå âûäåëåííîé äëÿ ìàññèâà ïàìÿòè
-        free(massHeap); //âûñâîáîæäåíèå âûäåëåííîé äëÿ ìàññèâà ïàìÿòè
+        free(massBubble); //высвобождение выделенной для массива памяти
+        free(massHeap); //высвобождение выделенной для массива памяти
     }
-    fclose(file); //çàêðûòèå ôàéëà
+    fclose(file); //закрытие файла
+}
 }
