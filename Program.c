@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MIN_SIZE 100000
-#define MAX_SIZE 100000
+#define MIN_SIZE 300000
+#define MAX_SIZE 300000
 #define STEP 50
+#define BOOL 0
 
 void generation(int *array1, int *array2, int len){ //функция, заполняющая два переданных массива, рандомными, но одинаковыми числами
     int i, g;
@@ -71,9 +72,26 @@ int main(){
         int *massBubble=malloc(sizeof(int)*length); //выделение памяти под массив, который будет отсортирован сортировкой пузырьком
         int *massHeap=malloc(sizeof(int)*length); //выделение памяти под массив, который будет отсортирован пиромидальной сортировкой
         generation(massBubble, massHeap, length);
+
+        if(BOOL){
+            for(int i=0; i<length; i++)
+                printf("%d ", massBubble[i]);
+                printf("\n");
+        }
+
         timeBubble=bubbleSort(massBubble, length); //сортировка массива пузырьком, в переменную timeBubble заносится время работы алгоритма
         timeHeap=heapSort(massHeap, length); //пиромидальная сортировка массива, в переменную timeBubble заносится время работы алгоритма
         fprintf(file, "%d %f %f\n", length, timeBubble, timeHeap); //запись полученных данных в файл
+
+        if(BOOL){
+            for(int i=0; i<length; i++)
+                printf("%d ", massBubble[i]);
+            printf("\n");
+            for(int i=0; i<length; i++)
+                printf("%d ", massHeap[i]);
+            printf("\n");
+        }
+
         free(massBubble); //высвобождение выделенной для массива памяти
         free(massHeap); //высвобождение выделенной для массива памяти
     }
