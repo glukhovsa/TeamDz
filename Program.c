@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MIN_SIZE 300000
-#define MAX_SIZE 300000
-#define STEP 50
-#define BOOL 0
+#define MIN_SIZE 2000
+#define MAX_SIZE 10000
+#define STEP 25
 
 void generation(int *array1, int *array2, int len){ //функция, заполняющая два переданных массива, рандомными, но одинаковыми числами
     int i, g;
@@ -22,13 +21,11 @@ void SWAP(int *array, int x, int y){
     array[y]=z;
 }
 
-float bubbleSort(int *array, int size){ //функция сортировки пузырьком, принимает указатель на массив, а возвращает время работы алгоритма
-    int start = clock(); //объявление переменной start(хранит количество тиков прошедших с начала запуска программы)
+void bubbleSort(int *array, int size){ //функция сортировки пузырьком, принимает указатель на массив, а возвращает время работы алгоритма
     for(int i=0; i<size-1; i++)
         for(int j=size-1; j>i; j--) //бежим по массиву от первого элемента до i элемента
             if(array[j-1]>array[j])
                 SWAP(array, j-1, j); //"поднимаем" элемент с наиболее большим значение "вверх"
-    return ((clock()-start)*1.0)/CLOCKS_PER_SEC; //возвращаем разницу между количеством тиков, прошедших с начала программы, и значением переменной start, переводя значение в секунды
 }
 
 
@@ -50,7 +47,6 @@ void heapify(int *arr, int n, int i) {
 }
 
 float heapSort(int *arr, int n) {
-    int start = clock();                // засекаем начальное время старта сортировки
     for (int i = n / 2 - 1; i >= 0; i--)   // создаем бинарное дерево, где главный корневой элемент - макисмальный, а каждый дочерний меньше своего корневого.
       heapify(arr, n, i);                  // n/2-1 -это все корневые элементы в дереве.
     for (int i = n - 1; i >= 0; i--) {
@@ -60,38 +56,47 @@ float heapSort(int *arr, int n) {
                                     //и затем снова меняем уже предпоследний элемент с корневым, и так пока не пройдемся по всему массиву
       heapify(arr, i, 0);
     }
-    return ((clock()-start)*1.0)/CLOCKS_PER_SEC; // закничиваем измерение времени нашей сортировки
   }
 
 int main(){
     FILE *file;
     file=fopen("file.txt", "w"); //открытие файла для записи в него
-    int length;
+    int length, start;
     float timeBubble, timeHeap;
     for(length=MIN_SIZE; length<=MAX_SIZE; length+=STEP){ //рассматривание работу алгоритмов для массивов длиной от MIN_SIZE до MAX_SIZE
         int *massBubble=malloc(sizeof(int)*length); //выделение памяти под массив, который будет отсортирован сортировкой пузырьком
         int *massHeap=malloc(sizeof(int)*length); //выделение памяти под массив, который будет отсортирован пиромидальной сортировкой
         generation(massBubble, massHeap, length);
 
-        if(BOOL){
-            for(int i=0; i<length; i++)
-                printf("%d ", massBubble[i]);
-                printf("\n");
-        }
+        start=clock();
+        bubbleSort(massBubble, length); //сортировка массива пузырьком, в переменную timeBubble заносится время работы алгоритма
+        timeBubble=(clock()-start)*1.0/CLOCKS_PER_SEC;
 
-        timeBubble=bubbleSort(massBubble, length); //сортировка массива пузырьком, в переменную timeBubble заносится время работы алгоритма
-        timeHeap=heapSort(massHeap, length); //пиромидальная сортировка массива, в переменную timeBubble заносится время работы алгоритма
+        start=clock();
+        heapSort(massHeap, length); //пиромидальная сортировка массива, в переменную timeBubble заносится время работы алгоритма
+        timeHeap=(clock()-start)*1.0/CLOCKS_PER_SEC;
+
+        generation(massBubble, massHeap, length);
+
+        start=clock();
+        bubbleSort(massBubble, length); //сортировка массива пузырьком, в переменную timeBubble заносится время работы алгоритма
+        timeBubble=timeBubble+(clock()-start)*1.0/CLOCKS_PER_SEC;
+
+        start=clock();
+        heapSort(massHeap, length); //пиромидальная сортировка массива, в переменную timeBubble заносится время работы алгоритма
+        timeHeap=timeHeap+(clock()-start)*1.0/CLOCKS_PER_SEC;
+
+        generation(massBubble, massHeap, length);
+
+        start=clock();
+        bubbleSort(massBubble, length);
+        timeBubble=(timeBubble+(clock()-start)*1.0/CLOCKS_PER_SEC)/3;
+
+        start=clock();
+        heapSort(massHeap, length);
+        timeHeap=(timeHeap+(clock()-start)*1.0/CLOCKS_PER_SEC)/3;
+
         fprintf(file, "%d %f %f\n", length, timeBubble, timeHeap); //запись полученных данных в файл
-
-        if(BOOL){
-            for(int i=0; i<length; i++)
-                printf("%d ", massBubble[i]);
-            printf("\n");
-            for(int i=0; i<length; i++)
-                printf("%d ", massHeap[i]);
-            printf("\n");
-        }
-
         free(massBubble); //высвобождение выделенной для массива памяти
         free(massHeap); //высвобождение выделенной для массива памяти
     }
